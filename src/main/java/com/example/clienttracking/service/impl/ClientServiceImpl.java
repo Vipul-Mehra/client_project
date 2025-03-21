@@ -5,6 +5,7 @@ import com.example.clienttracking.repository.ClientRepository;
 import com.example.clienttracking.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -32,8 +33,10 @@ public class ClientServiceImpl implements ClientService {
     public Client updateClient(Long id, Client clientDetails) {
         Client client = clientRepository.findById(id).orElse(null);
         if (client != null) {
-            // client.setClientName(clientDetails.getClientName());
-            // client.setClientEmail(clientDetails.getClientEmail());
+            client.setClientName(clientDetails.getClientName());
+            client.setClientEmail(clientDetails.getClientEmail());
+            // add.............................................................................
+            client.setClientProject(clientDetails.getClientProject());
             return clientRepository.save(client);
         }
         return null;
