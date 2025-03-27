@@ -7,20 +7,24 @@ public class ClientProject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long projectId;
+    private Long clientProjectId;
 
     // Many-to-one relationship: A client can have multiple projects
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    @ManyToOne
+    @JoinColumn(name = "project_Id", nullable = false)
+    private ProjectTable projectId;
+
     // Getters and Setters
-    public Long getProjectId() {
-        return projectId;
+    public Long getClientProjectId() {
+        return clientProjectId;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setClientProjectId(Long clientProjectId) {
+        this.clientProjectId = clientProjectId;
     }
 
     public Client getClient() {
@@ -29,5 +33,13 @@ public class ClientProject {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public ProjectTable getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(ProjectTable projectId) {
+        this.projectId = projectId;
     }
 }
