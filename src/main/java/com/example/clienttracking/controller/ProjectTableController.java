@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/projecttables")
+@RequestMapping("/projecttable")
 @CrossOrigin(origins = "*")
 public class ProjectTableController {
     @Autowired

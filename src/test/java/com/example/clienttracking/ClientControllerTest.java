@@ -40,10 +40,7 @@ public class ClientControllerTest {
 	// ✅ Test GET /clients/{id}
 	@Test
 	public void testGetClientById() throws Exception {
-		Client client = new Client();
-		client.setClientId(1L);
-		client.setClientName("ABC Corp");
-		client.setClientEmail("abc@example.com");
+		Client client = getClient();
 
 		when(clientService.getClientById(1L)).thenReturn(client);
 
@@ -53,13 +50,18 @@ public class ClientControllerTest {
 				.andExpect(jsonPath("$.clientEmail").value("abc@example.com"));
 	}
 
+	private static Client getClient() {
+		Client client = new Client();
+		client.setClientId(1L);
+		client.setClientName("ABC Corp");
+		client.setClientEmail("abc@example.com");
+		return client;
+	}
+
 	// ✅ Test GET /clients
 	@Test
 	public void testGetAllClients() throws Exception {
-		Client client1 = new Client();
-		client1.setClientId(1L);
-		client1.setClientName("ABC Corp");
-		client1.setClientEmail("abc@example.com");
+		Client client1 = getClient();
 
 		Client client2 = new Client();
 		client2.setClientId(2L);
@@ -77,10 +79,7 @@ public class ClientControllerTest {
 	// ✅ Test POST /clients
 	@Test
 	public void testCreateClient() throws Exception {
-		Client client = new Client();
-		client.setClientId(1L);
-		client.setClientName("ABC Corp");
-		client.setClientEmail("abc@example.com");
+		Client client = getClient();
 
 		when(clientService.createClient(Mockito.any(Client.class))).thenReturn(client);
 
