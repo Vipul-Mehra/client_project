@@ -1,10 +1,11 @@
 package com.example.clienttracking.service.impl;
 
-import com.example.clienttracking.model.ClientProject;
+import com.example.clienttracking.model.ClientProjects;
 import com.example.clienttracking.repository.ClientProjectRepository;
 import com.example.clienttracking.service.ClientProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -14,27 +15,26 @@ public class ClientProjectServiceImpl implements ClientProjectService {
     private ClientProjectRepository clientProjectRepository;
 
     @Override
-    public List<ClientProject> getAllClientProject() {
+    public List<ClientProjects> getAllClientProject() {
         return clientProjectRepository.findAll();
     }
 
     @Override
-    public ClientProject getClientProjectById(Long id) {
+    public ClientProjects getClientProjectById(Long id) {
         return clientProjectRepository.findById(id).orElse(null);
     }
 
     @Override
-    public ClientProject createClientProject(ClientProject clientProject) {
+    public ClientProjects createClientProject(ClientProjects clientProject) {
         return clientProjectRepository.save(clientProject);
     }
 
     @Override
-    public ClientProject updateClientProject(Long id, ClientProject clientProjectDetails) {
-        ClientProject clientProject = clientProjectRepository.findById(id).orElse(null);
-
+    public ClientProjects updateClientProject(Long id, ClientProjects clientProjectDetails) {
+        ClientProjects clientProject = clientProjectRepository.findById(id).orElse(null);
         if (clientProject != null) {
             clientProject.setClient(clientProjectDetails.getClient());
-            clientProject.setProjectId(clientProjectDetails.getProjectId());
+            clientProject.setProject(clientProjectDetails.getProject());
             return clientProjectRepository.save(clientProject);
         }
         return null;
@@ -44,5 +44,4 @@ public class ClientProjectServiceImpl implements ClientProjectService {
     public void deleteClientProject(Long id) {
         clientProjectRepository.deleteById(id);
     }
-
 }

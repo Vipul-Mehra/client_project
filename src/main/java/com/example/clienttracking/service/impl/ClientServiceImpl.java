@@ -1,6 +1,6 @@
 package com.example.clienttracking.service.impl;
 
-import com.example.clienttracking.model.Client;
+import com.example.clienttracking.model.Clients;
 import com.example.clienttracking.repository.ClientRepository;
 import com.example.clienttracking.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,28 +15,33 @@ public class ClientServiceImpl implements ClientService {
     private ClientRepository clientRepository;
 
     @Override
-    public List<Client> getAllClients() {
-        return clientRepository.findAll();
+    public List<Clients> getAllClients() {
+        List<Clients> clients = clientRepository.findAll();
+        clients.forEach(client -> {
+            if ("null".equals(client.getClientName()))
+                client.setClientName(null);
+            if ("null".equals(client.getClientEmail()))
+                client.setClientEmail(null);
+        });
+        return clients;
     }
 
     @Override
-    public Client getClientById(Long id) {
+    public Clients getClientById(Long id) {
         return clientRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Client createClient(Client client) {
+    public Clients createClient(Clients client) {
         return clientRepository.save(client);
     }
 
     @Override
-    public Client updateClient(Long id, Client clientDetails) {
-        Client client = clientRepository.findById(id).orElse(null);
+    public Clients updateClient(Long id, Clients clientDetails) {
+        Clients client = clientRepository.findById(id).orElse(null);
         if (client != null) {
             client.setClientName(clientDetails.getClientName());
             client.setClientEmail(clientDetails.getClientEmail());
-            // add.............................................................................
-            client.setClientProject(clientDetails.getClientProject());
             return clientRepository.save(client);
         }
         return null;

@@ -1,10 +1,11 @@
 package com.example.clienttracking.service.impl;
 
-import com.example.clienttracking.model.ProjectTable;
+import com.example.clienttracking.model.Projects;
 import com.example.clienttracking.repository.ProjectTableRepository;
 import com.example.clienttracking.service.ProjectTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -14,17 +15,17 @@ public class ProjectTableServiceImpl implements ProjectTableService {
     private ProjectTableRepository projectTableRepository;
 
     @Override
-    public List<ProjectTable> getAllProjectTable() {
+    public List<Projects> getAllProjectTable() {
         return projectTableRepository.findAll();
     }
 
     @Override
-    public ProjectTable getProjectTableById(Long id) {
+    public Projects getProjectTableById(Long id) {
         return projectTableRepository.findById(id).orElse(null);
     }
 
     @Override
-    public ProjectTable createProjectTable(ProjectTable projectTable) {
+    public Projects createProjectTable(Projects projectTable) {
         return projectTableRepository.save(projectTable);
     }
 
@@ -34,15 +35,13 @@ public class ProjectTableServiceImpl implements ProjectTableService {
     }
 
     @Override
-    public ProjectTable updateProjectTable(Long id, ProjectTable projectTableDetails) {
-        ProjectTable projectTable = projectTableRepository.findById(id).orElse(null);
-
+    public Projects updateProjectTable(Long id, Projects projectTableDetails) {
+        Projects projectTable = projectTableRepository.findById(id).orElse(null);
         if (projectTable != null) {
-            projectTable.setDiscription(projectTableDetails.getDiscription());
+            projectTable.setDescription(projectTableDetails.getDescription());
             projectTable.setProjectName(projectTableDetails.getProjectName());
             return projectTableRepository.save(projectTable);
         }
-
         return null;
     }
 }

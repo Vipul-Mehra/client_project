@@ -33,8 +33,13 @@ public class ResourceServiceImpl implements ResourceService {
     public Resource updateResource(Long id, Resource resourceDetails) {
         Resource resource = resourceRepository.findById(id).orElse(null);
         if (resource != null) {
-            resource.setResourceName(resourceDetails.getResourceName());
-            resource.setResourceRole(resourceDetails.getResourceRole());
+            // Only update fields if they are not null in the incoming data
+            if (resourceDetails.getResourceName() != null) {
+                resource.setResourceName(resourceDetails.getResourceName());
+            }
+            if (resourceDetails.getResourceRole() != null) {
+                resource.setResourceRole(resourceDetails.getResourceRole());
+            }
             return resourceRepository.save(resource);
         }
         return null;

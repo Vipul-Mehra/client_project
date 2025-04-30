@@ -1,16 +1,16 @@
 package com.example.clienttracking.service;
 
-import com.example.clienttracking.model.ProjectTable;
+import com.example.clienttracking.model.Projects;
 import java.util.List;
 
 public interface ProjectTableService {
-    List<ProjectTable> getAllProjectTable();
+    List<Projects> getAllProjectTable();
 
-    ProjectTable getProjectTableById(Long id);
+    Projects getProjectTableById(Long id);
 
-    ProjectTable createProjectTable(ProjectTable projectTable);
+    Projects createProjectTable(Projects projectTable);
 
-    ProjectTable updateProjectTable(Long id, ProjectTable projectTableDetails);
+    Projects updateProjectTable(Long id, Projects projectTableDetails);
 
     void deleteProjectTable(Long id);
 }

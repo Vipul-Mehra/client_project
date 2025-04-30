@@ -1,6 +1,6 @@
 package com.example.clienttracking.controller;
 
-import com.example.clienttracking.model.ProjectTable;
+import com.example.clienttracking.model.Projects;
 import com.example.clienttracking.service.ProjectTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +15,17 @@ public class ProjectTableController {
     private ProjectTableService projectTableService;
 
     @GetMapping
-    public List<ProjectTable> getAllProjectTables() {
+    public List<Projects> getAllProjectTables() {
         return projectTableService.getAllProjectTable();
     }
 
     @GetMapping("/{id}")
-    public ProjectTable getProjectTableById(@PathVariable Long id) {
+    public Projects getProjectTableById(@PathVariable Long id) {
         return projectTableService.getProjectTableById(id);
     }
 
     @PostMapping
-    public ProjectTable createProjectTable(@RequestBody ProjectTable projectTable) {
+    public Projects createProjectTable(@RequestBody Projects projectTable) {
         return projectTableService.createProjectTable(projectTable);
     }
 
@@ -35,7 +35,7 @@ public class ProjectTableController {
     }
 
     @PutMapping("/{id}")
-    public ProjectTable updateProjectTable(@PathVariable Long id, @RequestBody ProjectTable projectTable) {
+    public Projects updateProjectTable(@PathVariable Long id, @RequestBody Projects projectTable) {
         return projectTableService.updateProjectTable(id, projectTable);
     }
 

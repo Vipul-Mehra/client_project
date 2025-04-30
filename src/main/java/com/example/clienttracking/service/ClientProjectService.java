@@ -1,16 +1,16 @@
 package com.example.clienttracking.service;
 
-import com.example.clienttracking.model.ClientProject;
+import com.example.clienttracking.model.ClientProjects;
 import java.util.List;
 
 public interface ClientProjectService {
-    List<ClientProject> getAllClientProject();
+    List<ClientProjects> getAllClientProject();
 
-    ClientProject getClientProjectById(Long id);
+    ClientProjects getClientProjectById(Long id);
 
-    ClientProject createClientProject(ClientProject clientProject);
+    ClientProjects createClientProject(ClientProjects clientProject);
 
-    ClientProject updateClientProject(Long id, ClientProject clientProjectDetails);
+    ClientProjects updateClientProject(Long id, ClientProjects clientProjectDetails);
 
     void deleteClientProject(Long id);
 

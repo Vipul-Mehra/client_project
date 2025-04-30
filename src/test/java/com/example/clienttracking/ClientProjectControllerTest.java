@@ -1,34 +1,31 @@
 package com.example.clienttracking;
 
 import com.example.clienttracking.controller.ClientProjectController;
-import com.example.clienttracking.model.Client;
-import com.example.clienttracking.model.ClientProject;
-import com.example.clienttracking.model.ProjectTable;
+import com.example.clienttracking.model.Clients;
+import com.example.clienttracking.model.ClientProjects;
+import com.example.clienttracking.model.Projects;
 import com.example.clienttracking.service.ClientProjectService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.http.MediaType;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ClientProjectControllerTest {
@@ -48,58 +45,58 @@ public class ClientProjectControllerTest {
 
     @Test
     public void testGetClientProjectById() throws Exception {
-        ClientProject clientProject = getClientProject();
+        ClientProjects clientProject = getClientProject();
 
         when(clientProjectService.getClientProjectById(1L)).thenReturn(clientProject);
 
         mockMvc.perform(get("/clientprojects/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.client.clientName").value("ABC Corp"))
-                .andExpect(jsonPath("$.projectId.projectName").value("CRM System"));
+                .andExpect(jsonPath("$.project.projectName").value("CRM System"));
     }
 
     @Test
     public void testGetAllClientProjects() throws Exception {
-        ClientProject clientProject = getClientProject();
-        List<ClientProject> clientProjects = Arrays.asList(clientProject);
+        ClientProjects clientProject = getClientProject();
+        List<ClientProjects> clientProjects = Arrays.asList(clientProject);
 
         when(clientProjectService.getAllClientProject()).thenReturn(clientProjects);
 
         mockMvc.perform(get("/clientprojects"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].client.clientName").value("ABC Corp"))
-                .andExpect(jsonPath("$[0].projectId.projectName").value("CRM System"));
+                .andExpect(jsonPath("$[0].project.projectName").value("CRM System"));
     }
 
     @Test
     public void testCreateClientProject() throws Exception {
-        ClientProject clientProject = getClientProject();
+        ClientProjects clientProject = getClientProject();
 
-        when(clientProjectService.createClientProject(Mockito.any(ClientProject.class))).thenReturn(clientProject);
+        when(clientProjectService.createClientProject(Mockito.any(ClientProjects.class))).thenReturn(clientProject);
 
         mockMvc.perform(post("/clientprojects")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"client\":{\"clientId\":1,\"clientName\":\"ABC Corp\"}," +
-                        "\"projectId\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
+                        "\"project\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.client.clientName").value("ABC Corp"))
-                .andExpect(jsonPath("$.projectId.projectName").value("CRM System"));
+                .andExpect(jsonPath("$.project.projectName").value("CRM System"));
     }
 
     @Test
     public void testUpdateClientProject() throws Exception {
-        ClientProject updatedClientProject = getClientProject();
+        ClientProjects updatedClientProject = getClientProject();
 
-        when(clientProjectService.updateClientProject(Mockito.eq(1L), Mockito.any(ClientProject.class)))
+        when(clientProjectService.updateClientProject(Mockito.eq(1L), Mockito.any(ClientProjects.class)))
                 .thenReturn(updatedClientProject);
 
         mockMvc.perform(put("/clientprojects/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"client\":{\"clientId\":1,\"clientName\":\"ABC Corp\"}," +
-                        "\"projectId\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
+                        "\"project\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.client.clientName").value("ABC Corp"))
-                .andExpect(jsonPath("$.projectId.projectName").value("CRM System"));
+                .andExpect(jsonPath("$.project.projectName").value("CRM System"));
     }
 
     @Test
@@ -111,19 +108,19 @@ public class ClientProjectControllerTest {
     }
 
     // Helper method to create a sample ClientProject object
-    private static ClientProject getClientProject() {
-        Client client = new Client();
-        client.setClientId(1L);
+    private static ClientProjects getClientProject() {
+        Clients client = new Clients();
+        client.setId(1L);
         client.setClientName("ABC Corp");
 
-        ProjectTable project = new ProjectTable();
+        Projects project = new Projects();
         project.setProjectId(1L);
         project.setProjectName("CRM System");
 
-        ClientProject clientProject = new ClientProject();
+        ClientProjects clientProject = new ClientProjects();
         clientProject.setClientProjectId(1L);
         clientProject.setClient(client);
-        clientProject.setProjectId(project);
+        clientProject.setProject(project);
 
         return clientProject;
     }

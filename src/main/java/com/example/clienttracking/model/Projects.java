@@ -3,18 +3,17 @@ package com.example.clienttracking.model;
 import jakarta.persistence.*;
 
 @Entity
-public class ProjectTable {
-
+@Table(name = "projects")
+public class Projects {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long projectId;
-
-    @Column(nullable = false)
+    @Column(name = "project_name")
     private String projectName;
+    @Column(name = "description")
+    private String description;
 
-    private String discription;
-
-    // getter setter
+    // Getters and setters
     public Long getProjectId() {
         return projectId;
     }
@@ -31,11 +30,7 @@ public class ProjectTable {
         this.projectName = projectName;
     }
 
-    public String getDiscription() {
-        return discription;
-    }
+    public String getDescription() {return description;}
 
-    public void setDiscription(String discription) {
-        this.discription = discription;
-    }
+    public void setDescription(String description) {this.description = description;}
 }
