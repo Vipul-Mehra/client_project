@@ -20,7 +20,7 @@ public class TimeSheets {
     @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "client_project_id", nullable = false)
     private ClientProjects clientProject;
 }

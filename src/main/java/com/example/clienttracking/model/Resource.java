@@ -13,5 +13,7 @@ public class Resource {
     private Long resourceId;
 
     private String resourceName;
-    private String resourceRole; // Ensure this field exists
+    private String resourceRole;
+    @Version
+    private Integer version;
 }

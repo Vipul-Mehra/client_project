@@ -1,18 +1,16 @@
 package com.example.clienttracking.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
+@Getter
+@Setter
 public class TimeSheetDTO {
     private Long timeSheetId;
     private Long resourceId;
-
-    private String resourceName;
-    private String resourceRole;
-
     private Long clientProjectId;
-    private String clientName;
-    private String projectName;
     private String workDate;
     private Double hoursWorked;
 }

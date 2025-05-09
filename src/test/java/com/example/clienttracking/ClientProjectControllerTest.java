@@ -75,10 +75,10 @@ public class ClientProjectControllerTest {
         when(clientProjectService.createClientProject(Mockito.any(ClientProjects.class))).thenReturn(clientProject);
 
         mockMvc.perform(post("/clientprojects")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"client\":{\"clientId\":1,\"clientName\":\"ABC Corp\"}," +
-                        "\"project\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
-                .andExpect(status().isOk())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"client\":{\"clientId\":1,\"clientName\":\"ABC Corp\"}," +
+                                "\"project\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.client.clientName").value("ABC Corp"))
                 .andExpect(jsonPath("$.project.projectName").value("CRM System"));
     }
@@ -91,9 +91,9 @@ public class ClientProjectControllerTest {
                 .thenReturn(updatedClientProject);
 
         mockMvc.perform(put("/clientprojects/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"client\":{\"clientId\":1,\"clientName\":\"ABC Corp\"}," +
-                        "\"project\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"client\":{\"clientId\":1,\"clientName\":\"ABC Corp\"}," +
+                                "\"project\":{\"projectId\":1,\"projectName\":\"CRM System\"}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.client.clientName").value("ABC Corp"))
                 .andExpect(jsonPath("$.project.projectName").value("CRM System"));
@@ -104,7 +104,7 @@ public class ClientProjectControllerTest {
         doNothing().when(clientProjectService).deleteClientProject(1L);
 
         mockMvc.perform(delete("/clientprojects/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     // Helper method to create a sample ClientProject object

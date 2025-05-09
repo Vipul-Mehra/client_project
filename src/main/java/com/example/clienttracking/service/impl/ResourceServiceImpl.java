@@ -5,7 +5,7 @@ import com.example.clienttracking.repository.ResourceRepository;
 import com.example.clienttracking.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -25,11 +25,13 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
+    @Transactional // Add transactional annotation
     public Resource createResource(Resource resource) {
         return resourceRepository.save(resource);
     }
 
     @Override
+    @Transactional // Add transactional annotation
     public Resource updateResource(Long id, Resource resourceDetails) {
         Resource resource = resourceRepository.findById(id).orElse(null);
         if (resource != null) {
@@ -46,6 +48,7 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
+    @Transactional // Add transactional annotation
     public void deleteResource(Long id) {
         resourceRepository.deleteById(id);
     }

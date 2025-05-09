@@ -1,8 +1,10 @@
 package com.example.clienttracking.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "clients")
 public class Clients {
 

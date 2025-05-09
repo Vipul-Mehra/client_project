@@ -2,6 +2,8 @@ package com.example.clienttracking.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -15,13 +17,10 @@ public class ClientProjects {
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Clients client;
+    private Clients client; // Changed from Client to Clients
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     private Projects project;
 
-    // One-to-Many relationship with TimeSheets
-    @OneToMany(mappedBy = "clientProject", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<TimeSheets> timeSheets;
 }

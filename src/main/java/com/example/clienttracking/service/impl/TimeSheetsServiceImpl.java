@@ -2,6 +2,7 @@ package com.example.clienttracking.service.impl;
 
 import com.example.clienttracking.dto.TimeSheetDTO;
 import com.example.clienttracking.model.ClientProjects;
+import com.example.clienttracking.model.Clients;
 import com.example.clienttracking.model.Resource;
 import com.example.clienttracking.model.TimeSheets;
 import com.example.clienttracking.repository.ClientProjectRepository;
@@ -38,8 +39,8 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
         if (sheet.getResource() != null) {
             Resource resource = sheet.getResource();
             dto.setResourceId(resource.getResourceId());
-            dto.setResourceName(resource.getResourceName());
-            dto.setResourceRole(resource.getResourceRole());
+//            dto.setResourceName(resource.getResourceName());
+//            dto.setResourceRole(resource.getResourceRole());
         }
 
         if (sheet.getClientProject() != null) {
@@ -47,11 +48,11 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
             dto.setClientProjectId(clientProj.getClientProjectId());
 
             if (clientProj.getClient() != null) {
-                dto.setClientName(clientProj.getClient().getClientName());
+//                dto.setClientName(clientProj.getClient().getClientName());
             }
 
             if (clientProj.getProject() != null) {
-                dto.setProjectName(clientProj.getProject().getProjectName());
+//                dto.setProjectName(clientProj.getProject().getProjectName());
             }
         }
 
@@ -137,7 +138,6 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
         } else {
             existing.setClientProject(null);
         }
-
         // Update Work Date
         try {
             if (dto.getWorkDate() != null && !dto.getWorkDate().trim().isEmpty()) {
@@ -153,7 +153,6 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
 
         return mapToDTO(timeSheetsRepository.save(existing));
     }
-
     @Override
     public void deleteWorkTimetable(Long id) {
         timeSheetsRepository.deleteById(id);
