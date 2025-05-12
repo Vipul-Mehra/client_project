@@ -2,6 +2,7 @@ package com.example.clienttracking.controller;
 
 import com.example.clienttracking.dto.TimeSheetDTO;
 import com.example.clienttracking.service.TimeSheetsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,11 @@ public class TimeSheetsController {
     }
 
     @PostMapping
-    public ResponseEntity<TimeSheetDTO> createWorkTimetable(@RequestBody TimeSheetDTO dto) {
+    public ResponseEntity<TimeSheetDTO> createWorkTimetable(@RequestBody String rawBody) {
+        System.out.println("Raw Request Body: " + rawBody);
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            TimeSheetDTO dto = objectMapper.readValue(rawBody, TimeSheetDTO.class);
             TimeSheetDTO created = timeSheetsService.createWorkTimetable(dto);
             return new ResponseEntity<>(created, HttpStatus.CREATED);
         } catch (Exception e) {
