@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClientDTO {
+
     private Long id;
     private String clientName;
     private String clientEmail;
