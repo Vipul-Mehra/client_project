@@ -4,12 +4,18 @@ import com.example.clienttracking.dto.TimeSheetDTO;
 import com.example.clienttracking.service.TimeSheetsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.query.Page;
+import org.springframework.data.domain.PageRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -60,4 +66,14 @@ public class TimeSheetsController {
         timeSheetsService.deleteWorkTimetable(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    //paggination code start here
+
+    @GetMapping
+    public Page<TimeSheetDTO> getTimeSheets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return timeSheetsService.getPaginatedTimeSheets(page, size);
+    }
+
 }

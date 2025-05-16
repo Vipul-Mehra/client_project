@@ -14,9 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+//pagination
+import org.hibernate.query.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+
 
 @Service
 public class TimeSheetsServiceImpl implements TimeSheetsService {
@@ -157,4 +164,25 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
     public void deleteWorkTimetable(Long id) {
         timeSheetsRepository.deleteById(id);
     }
+
+    //pagination code here
+    @Override
+    public Page<TimeSheetDTO> getPaginatedTimeSheets(int page, int size) {
+        Page<TimeSheets> timeSheetsPage = timeSheetsRepository.findAll(PageRequest.of(page, size));
+
+        return timeSheetsPage.map(this::convertToDTO);
+    }
+
+    private TimeSheetDTO convertToDTO(TimeSheets entity) {
+        TimeSheetDTO dto = new TimeSheetDTO();
+        dto.setTimeSheetId(entity.getTimeSheetId());
+        dto.setWorkDate(entity.getWorkDate() != null ? entity.getWorkDate().toString() : null);
+        dto.setHoursWorked(entity.getHoursWorked());
+        dto.setResourceId(entity.getResource().getResourceId());
+        dto.setClientProjectId(entity.getClientProject().getClientProjectId());
+        return dto;
+    }
+
+
+
 }
