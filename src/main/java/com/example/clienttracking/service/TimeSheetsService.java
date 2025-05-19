@@ -1,8 +1,9 @@
 package com.example.clienttracking.service;
 
 import com.example.clienttracking.dto.TimeSheetDTO;
-import org.hibernate.query.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+
+
 
 
 import java.util.List;
@@ -14,6 +15,4 @@ public interface TimeSheetsService {
     TimeSheetDTO updateWorkTimetable(Long id, TimeSheetDTO dto);
     void deleteWorkTimetable(Long id);
     Page<TimeSheetDTO> getPaginatedTimeSheets(int page, int size);
-
-
 }

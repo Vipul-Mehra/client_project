@@ -4,13 +4,15 @@ import com.example.clienttracking.dto.TimeSheetDTO;
 import com.example.clienttracking.service.TimeSheetsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
-import org.hibernate.query.Page;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.sql.Time;
 import java.util.HashMap;
@@ -20,15 +22,22 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/timeSheets")
-public class TimeSheetsController {
+public class    TimeSheetsController {
 
     @Autowired
     private TimeSheetsService timeSheetsService;
 
+    //paggination code start here
     @GetMapping
-    public ResponseEntity<List<TimeSheetDTO>> getAllWorkTimetables() {
-        return new ResponseEntity<>(timeSheetsService.getAllWorkTimetables(), HttpStatus.OK);
+    public org.springframework.data.domain.Page<TimeSheetDTO> getTimeSheets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size) {
+        return timeSheetsService.getPaginatedTimeSheets(page, size);
     }
+//    @GetMapping
+//    public ResponseEntity<List<TimeSheetDTO>> getAllWorkTimetables() {
+//        return new ResponseEntity<>(timeSheetsService.getAllWorkTimetables(), HttpStatus.OK);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TimeSheetDTO> getWorkTimetableById(@PathVariable Long id) {
@@ -36,12 +45,10 @@ public class TimeSheetsController {
         return dto != null ? new ResponseEntity<>(dto, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+
     @PostMapping
-    public ResponseEntity<TimeSheetDTO> createWorkTimetable(@RequestBody String rawBody) {
-        System.out.println("Raw Request Body: " + rawBody);
+    public ResponseEntity<TimeSheetDTO> createWorkTimetable(@RequestBody TimeSheetDTO dto) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            TimeSheetDTO dto = objectMapper.readValue(rawBody, TimeSheetDTO.class);
             TimeSheetDTO created = timeSheetsService.createWorkTimetable(dto);
             return new ResponseEntity<>(created, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -69,11 +76,11 @@ public class TimeSheetsController {
 
     //paggination code start here
 
-    @GetMapping
-    public Page<TimeSheetDTO> getTimeSheets(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return timeSheetsService.getPaginatedTimeSheets(page, size);
-    }
+//    @GetMapping
+//    public Page<TimeSheetDTO> getTimeSheets(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//        return timeSheetsService.getPaginatedTimeSheets(page, size);
+//    }
 
 }

@@ -11,6 +11,7 @@ import com.example.clienttracking.repository.TimeSheetsRepository;
 import com.example.clienttracking.service.TimeSheetsService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -20,9 +21,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //pagination
-import org.hibernate.query.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
+
 
 
 @Service
@@ -168,9 +170,9 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
     //pagination code here
     @Override
     public Page<TimeSheetDTO> getPaginatedTimeSheets(int page, int size) {
-        Page<TimeSheets> timeSheetsPage = timeSheetsRepository.findAll(PageRequest.of(page, size));
-
-        return timeSheetsPage.map(this::convertToDTO);
+        Pageable pageable = PageRequest.of(page, size);
+        return timeSheetsRepository.findAll(pageable)
+                .map(this::mapToDTO); // use consistent mapper
     }
 
     private TimeSheetDTO convertToDTO(TimeSheets entity) {
