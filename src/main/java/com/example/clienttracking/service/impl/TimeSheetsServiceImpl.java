@@ -2,7 +2,6 @@ package com.example.clienttracking.service.impl;
 
 import com.example.clienttracking.dto.TimeSheetDTO;
 import com.example.clienttracking.model.ClientProjects;
-import com.example.clienttracking.model.Clients;
 import com.example.clienttracking.model.Resource;
 import com.example.clienttracking.model.TimeSheets;
 import com.example.clienttracking.repository.ClientProjectRepository;
@@ -11,21 +10,14 @@ import com.example.clienttracking.repository.TimeSheetsRepository;
 import com.example.clienttracking.service.TimeSheetsService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-//pagination
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
-
-
 
 @Service
 public class TimeSheetsServiceImpl implements TimeSheetsService {
@@ -41,28 +33,17 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+    // Map Entity to DTO
     private TimeSheetDTO mapToDTO(TimeSheets sheet) {
         TimeSheetDTO dto = new TimeSheetDTO();
         dto.setTimeSheetId(sheet.getTimeSheetId());
 
         if (sheet.getResource() != null) {
-            Resource resource = sheet.getResource();
-            dto.setResourceId(resource.getResourceId());
-//            dto.setResourceName(resource.getResourceName());
-//            dto.setResourceRole(resource.getResourceRole());
+            dto.setResourceId(sheet.getResource().getResourceId());
         }
 
         if (sheet.getClientProject() != null) {
-            ClientProjects clientProj = sheet.getClientProject();
-            dto.setClientProjectId(clientProj.getClientProjectId());
-
-            if (clientProj.getClient() != null) {
-//                dto.setClientName(clientProj.getClient().getClientName());
-            }
-
-            if (clientProj.getProject() != null) {
-//                dto.setProjectName(clientProj.getProject().getProjectName());
-            }
+            dto.setClientProjectId(sheet.getClientProject().getClientProjectId());
         }
 
         dto.setWorkDate(sheet.getWorkDate() != null ? sdf.format(sheet.getWorkDate()) : null);
@@ -70,6 +51,8 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
 
         return dto;
     }
+
+    // Map DTO to Entity
     private TimeSheets mapToEntity(TimeSheetDTO dto) {
         TimeSheets entity = new TimeSheets();
         entity.setTimeSheetId(dto.getTimeSheetId());
@@ -130,7 +113,6 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
         TimeSheets existing = timeSheetsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("TimeSheet not found"));
 
-        // Update Resource
         if (dto.getResourceId() != null) {
             Resource resource = resourceRepository.findById(dto.getResourceId())
                     .orElseThrow(() -> new EntityNotFoundException("Resource not found"));
@@ -139,7 +121,6 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
             existing.setResource(null);
         }
 
-        // Update ClientProject
         if (dto.getClientProjectId() != null) {
             ClientProjects project = clientProjectRepository.findById(dto.getClientProjectId())
                     .orElseThrow(() -> new EntityNotFoundException("Client Project not found"));
@@ -147,7 +128,7 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
         } else {
             existing.setClientProject(null);
         }
-        // Update Work Date
+
         try {
             if (dto.getWorkDate() != null && !dto.getWorkDate().trim().isEmpty()) {
                 existing.setWorkDate(sdf.parse(dto.getWorkDate()));
@@ -162,29 +143,74 @@ public class TimeSheetsServiceImpl implements TimeSheetsService {
 
         return mapToDTO(timeSheetsRepository.save(existing));
     }
+
     @Override
     public void deleteWorkTimetable(Long id) {
         timeSheetsRepository.deleteById(id);
     }
 
-    //pagination code here
     @Override
-    public Page<TimeSheetDTO> getPaginatedTimeSheets(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return timeSheetsRepository.findAll(pageable)
-                .map(this::mapToDTO); // use consistent mapper
+    public List<TimeSheetDTO> search(String keyword, LocalDate startDate, LocalDate endDate, LocalDate entityDate) {
+        List<TimeSheets> allData = timeSheetsRepository.findAll();
+
+        return allData.stream()
+                .filter(item -> {
+                    boolean matchKeyword = true;
+
+                    if (keyword != null && !keyword.isEmpty()) {
+                        String lower = keyword.toLowerCase();
+                        matchKeyword = false;
+
+                        // Check Client Name
+                        if (item.getClientProject() != null &&
+                                item.getClientProject().getClient() != null &&
+                                item.getClientProject().getClient().getClientName() != null &&
+                                item.getClientProject().getClient().getClientName().toLowerCase().contains(lower)) {
+                            matchKeyword = true;
+                        }
+
+                        // Check Project Name
+                        if (!matchKeyword && item.getClientProject() != null &&
+                                item.getClientProject().getProject() != null &&
+                                item.getClientProject().getProject().getProjectName() != null &&
+                                item.getClientProject().getProject().getProjectName().toLowerCase().contains(lower)) {
+                            matchKeyword = true;
+                        }
+
+                        // Check Resource Name
+                        if (!matchKeyword && item.getResource() != null &&
+                                item.getResource().getResourceName() != null &&
+                                item.getResource().getResourceName().toLowerCase().contains(lower)) {
+                            matchKeyword = true;
+                        }
+                    }
+
+                    boolean matchDateRange = true;
+                    boolean matchEntityDate = true;
+
+                    // Convert workDate to LocalDate
+                    LocalDate workDate = item.getWorkDate() != null
+                            ? item.getWorkDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                            : null;
+
+                    // Filter by date range
+                    if (startDate != null || endDate != null) {
+                        if (workDate == null) {
+                            matchDateRange = false;
+                        } else {
+                            if (startDate != null && endDate != null) {
+                                matchDateRange = !workDate.isBefore(startDate) && !workDate.isAfter(endDate);
+                            } else if (startDate != null) {
+                                matchDateRange = !workDate.isBefore(startDate);
+                            } else {
+                                matchDateRange = !workDate.isAfter(endDate);
+                            }
+                        }
+                    }
+
+                   
+                    return matchKeyword && matchDateRange && matchEntityDate;
+                })
+                .map(this::mapToDTO).collect(Collectors.toList());
     }
-
-    private TimeSheetDTO convertToDTO(TimeSheets entity) {
-        TimeSheetDTO dto = new TimeSheetDTO();
-        dto.setTimeSheetId(entity.getTimeSheetId());
-        dto.setWorkDate(entity.getWorkDate() != null ? entity.getWorkDate().toString() : null);
-        dto.setHoursWorked(entity.getHoursWorked());
-        dto.setResourceId(entity.getResource().getResourceId());
-        dto.setClientProjectId(entity.getClientProject().getClientProjectId());
-        return dto;
-    }
-
-
-
 }

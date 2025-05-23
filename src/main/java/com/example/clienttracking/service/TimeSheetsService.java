@@ -2,10 +2,7 @@ package com.example.clienttracking.service;
 
 import com.example.clienttracking.dto.TimeSheetDTO;
 import org.springframework.data.domain.Page;
-
-
-
-
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TimeSheetsService {
@@ -14,5 +11,5 @@ public interface TimeSheetsService {
     TimeSheetDTO createWorkTimetable(TimeSheetDTO dto);
     TimeSheetDTO updateWorkTimetable(Long id, TimeSheetDTO dto);
     void deleteWorkTimetable(Long id);
-    Page<TimeSheetDTO> getPaginatedTimeSheets(int page, int size);
+    List<TimeSheetDTO> search(String keyword, LocalDate startDate, LocalDate endDate, LocalDate entityDate);
 }

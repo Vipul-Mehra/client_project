@@ -13,4 +13,7 @@ public class TimeSheetDTO {
     private Long clientProjectId;
     private String workDate;
     private Double hoursWorked;
+
+    public void setClientName(String clientName) {
+    }
 }

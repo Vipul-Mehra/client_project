@@ -2,85 +2,118 @@ package com.example.clienttracking.controller;
 
 import com.example.clienttracking.dto.TimeSheetDTO;
 import com.example.clienttracking.service.TimeSheetsService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.sql.Time;
-import java.util.HashMap;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/timeSheets")
-public class    TimeSheetsController {
+@CrossOrigin(origins = "*")
+public class TimeSheetsController {
 
     @Autowired
     private TimeSheetsService timeSheetsService;
 
-    //paggination code start here
+    // Unified endpoint with all features
     @GetMapping
-    public org.springframework.data.domain.Page<TimeSheetDTO> getTimeSheets(
+    public ResponseEntity<Page<TimeSheetDTO>> getTimeSheets(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size) {
-        return timeSheetsService.getPaginatedTimeSheets(page, size);
-    }
-//    @GetMapping
-//    public ResponseEntity<List<TimeSheetDTO>> getAllWorkTimetables() {
-//        return new ResponseEntity<>(timeSheetsService.getAllWorkTimetables(), HttpStatus.OK);
-//    }
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortDir,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate entityDate
 
+    ){
+
+        List<TimeSheetDTO> result = timeSheetsService.search(keyword, startDate, endDate, entityDate);
+
+
+        // Apply sorting
+        if (sortBy != null && !sortBy.isEmpty()) {
+            boolean isDesc = "desc".equalsIgnoreCase(sortDir);
+
+            switch (sortBy.toLowerCase()) {
+                case "hoursworked":
+                    result.sort(Comparator.comparing(dto -> dto.getHoursWorked()));
+                    break;
+                case "resourceid":
+                    result.sort(Comparator.comparing(dto -> dto.getResourceId()));
+                    break;
+                case "clientprojectid":
+                    result.sort(Comparator.comparing(dto -> dto.getClientProjectId()));
+                    break;
+                default:
+                    result.sort(Comparator.comparing(dto -> dto.getTimeSheetId()));
+            }
+
+            if (isDesc) {
+                Collections.reverse(result);
+            }
+        }
+
+        // Manual pagination
+        int start = Math.min(page * size, result.size());
+        int end = Math.min(start + size, result.size());
+
+        List<TimeSheetDTO> pagedContent = result.subList(start, end);
+        Pageable pageable = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(new PageImpl<>(pagedContent, pageable, result.size()));
+    }
+
+    // Get by ID
     @GetMapping("/{id}")
     public ResponseEntity<TimeSheetDTO> getWorkTimetableById(@PathVariable Long id) {
         TimeSheetDTO dto = timeSheetsService.getWorkTimetableById(id);
-        return dto != null ? new ResponseEntity<>(dto, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(dto);
     }
 
-
+    // Create
     @PostMapping
     public ResponseEntity<TimeSheetDTO> createWorkTimetable(@RequestBody TimeSheetDTO dto) {
-        try {
-            TimeSheetDTO created = timeSheetsService.createWorkTimetable(dto);
-            return new ResponseEntity<>(created, HttpStatus.CREATED);
-        } catch (Exception e) {
-            System.err.println("Error creating TimeSheet: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        TimeSheetDTO created = timeSheetsService.createWorkTimetable(dto);
+        return ResponseEntity.status(201).body(created);
     }
 
+    // Update
     @PutMapping("/{id}")
     public ResponseEntity<TimeSheetDTO> updateWorkTimetable(@PathVariable Long id, @RequestBody TimeSheetDTO dto) {
-        try {
-            TimeSheetDTO updated = timeSheetsService.updateWorkTimetable(id, dto);
-            return updated != null ? new ResponseEntity<>(updated, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            System.err.println("Error updating TimeSheet: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        TimeSheetDTO updated = timeSheetsService.updateWorkTimetable(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
+    // Delete
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkTimetable(@PathVariable Long id) {
         timeSheetsService.deleteWorkTimetable(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
-    //paggination code start here
-
-//    @GetMapping
-//    public Page<TimeSheetDTO> getTimeSheets(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        return timeSheetsService.getPaginatedTimeSheets(page, size);
-//    }
-
+//    keycloak coding
+@GetMapping("/api/secure/data")
+@PreAuthorize("hasRole('user')")  // or your Keycloak role
+public String securedData() {
+    return "This is secured data";
 }
+
+    @GetMapping("/api/public")
+    public String publicData() {
+        return "This is public data";
+    }
+}
+
