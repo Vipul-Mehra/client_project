@@ -31,8 +31,9 @@ spring:
             client-secret: 1tvvb2R3qCRXSZbP5iTMP4a9gYdsOi40
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope: openid,profile,email
+            scope: openid, profile, email
             client-name: Keycloak
+
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/cci
@@ -42,11 +43,11 @@ spring:
             jwk-set-uri: http://localhost:8080/realms/cci/protocol/openid-connect/certs
             user-name-attribute: preferred_username
 
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/cci
+    resourceserver:
+      jwt:
+        issuer-uri: http://localhost:8080/realms/cci
 
-  logging:
-    level:
-      org.springframework.security: DEBUG
-      org.springframework.web: DEBUG
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG

@@ -9,8 +9,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -105,15 +108,16 @@ public class TimeSheetsController {
     }
 
 //    keycloak coding
-@GetMapping("/api/secure/data")
-@PreAuthorize("hasRole('user')")  // or your Keycloak role
-public String securedData() {
-    return "This is secured data";
-}
 
-    @GetMapping("/api/public")
-    public String publicData() {
-        return "This is public data";
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+//        if (authService.authenticate(username, password)) {
+//            return ResponseEntity.ok("Login successful");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+//        }
+//    }
+
+
 }
 
