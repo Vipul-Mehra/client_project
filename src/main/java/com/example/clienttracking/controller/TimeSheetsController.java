@@ -117,6 +117,11 @@ public class TimeSheetsController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
 //        }
 //    }
+    @GetMapping("/api/products")
+     public ResponseEntity<String> healthCheck() {
+      return ResponseEntity.ok("API is working!");
+}
+
 
 
 }
