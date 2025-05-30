@@ -1,25 +1,28 @@
 package com.example.clienttracking.keycloakProvider;
 
-
-
 import org.keycloak.component.ComponentModel;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialModel;
-import org.keycloak.models.*;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.RealmModel;
+import org.keycloak.models.SubjectCredentialManager;
+import org.keycloak.models.UserModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapter;
+
+import com.example.clienttracking.model.User;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-public class MyUserAdapter extends AbstractUserAdapter {
+public class MyUserAdapter extends AbstractUserAdapter implements UserModel {
 
     private final String username;
     private final ComponentModel model;
 
-    public MyUserAdapter(KeycloakSession session, RealmModel realm, ComponentModel model, UserEntity userEntity) {
+    public MyUserAdapter(KeycloakSession session, RealmModel realm, ComponentModel model, User user) {
         super(session, realm, model);
-        this.username = userEntity.getUsername();
+        this.username = user.getUsername();
         this.model = model;
         setUsername(this.username);
     }
@@ -34,56 +37,30 @@ public class MyUserAdapter extends AbstractUserAdapter {
         return StorageId.keycloakId(model, username);
     }
 
-    // Required implementation for newer Keycloak versions (22+)
     @Override
     public SubjectCredentialManager credentialManager() {
         return new SubjectCredentialManager() {
-            @Override
-            public boolean isConfiguredFor(String credentialType) {
-                return false;
-            }
+            // Implement methods as needed; returning defaults for now
+            @Override public boolean isConfiguredFor(String s) { return false; }
+            @Override public boolean isConfiguredLocally(String s) { return false; }
 
             @Override
-            public boolean isConfiguredLocally(String s) {
-                return false;
-            }
-
-
-
-            @Override
-            public boolean isValid(List<CredentialInput> list) {
-                return false;
-            }
-
-            @Override
-            public boolean updateCredential(CredentialInput input) {
-                throw new UnsupportedOperationException("Read-only user");
-            }
-
-            @Override
-            public void updateStoredCredential(CredentialModel credentialModel) {
-
-            }
-
-            @Override
-            public CredentialModel createStoredCredential(CredentialModel credentialModel) {
-                return null;
-            }
-
-            @Override
-            public boolean removeStoredCredentialById(String s) {
-                return false;
-            }
-
-            @Override
-            public CredentialModel getStoredCredentialById(String s) {
-                return null;
-            }
-
-            @Override
-            public Stream<CredentialModel> getStoredCredentialsStream() {
+            public Stream<String> getConfiguredUserStorageCredentialTypesStream() {
                 return Stream.empty();
             }
+
+            @Override
+            public CredentialModel createCredentialThroughProvider(CredentialModel credentialModel) {
+                return null;
+            }
+
+            @Override public boolean isValid(List<CredentialInput> list) { return false; }
+            @Override public boolean updateCredential(CredentialInput credentialInput) { return false; }
+            @Override public void updateStoredCredential(CredentialModel credentialModel) {}
+            @Override public CredentialModel createStoredCredential(CredentialModel credentialModel) { return null; }
+            @Override public boolean removeStoredCredentialById(String s) { return false; }
+            @Override public CredentialModel getStoredCredentialById(String s) { return null; }
+            @Override public Stream<CredentialModel> getStoredCredentialsStream() { return Stream.empty(); }
 
             @Override
             public Stream<CredentialModel> getStoredCredentialsByTypeStream(String s) {
@@ -106,23 +83,13 @@ public class MyUserAdapter extends AbstractUserAdapter {
             }
 
             @Override
-            public void disableCredentialType(String credentialType) {
-                throw new UnsupportedOperationException("Read-only user");
+            public void disableCredentialType(String s) {
+
             }
 
             @Override
             public Stream<String> getDisableableCredentialTypesStream() {
                 return Stream.empty();
-            }
-
-            @Override
-            public Stream<String> getConfiguredUserStorageCredentialTypesStream() {
-                return Stream.empty();
-            }
-
-            @Override
-            public CredentialModel createCredentialThroughProvider(CredentialModel credentialModel) {
-                return null;
             }
         };
     }

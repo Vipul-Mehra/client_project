@@ -1,46 +1,40 @@
 package com.example.clienttracking.keycloakProvider;
 
-import org.keycloak.Config;
+import jakarta.persistence.EntityManager;
 import org.keycloak.component.ComponentModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
-import org.keycloak.provider.ProviderConfigProperty;
-import org.keycloak.provider.ProviderConfigurationBuilder;
 import org.keycloak.storage.UserStorageProviderFactory;
-
-import java.util.List;
 
 public class MyUserStorageProviderFactory implements UserStorageProviderFactory<MyUserStorageProvider> {
 
-    @Override
-    public MyUserStorageProvider create(KeycloakSession session, ComponentModel model) {
-        return new MyUserStorageProvider(session, model);
+
+    public MyUserStorageProvider create(KeycloakSession session, ComponentModel model, EntityManager em) {
+        return new MyUserStorageProvider(session, model , em);
     }
 
     @Override
-    public void init(Config.Scope config) {
-        // Global init if needed
+    public void init(org.keycloak.Config.Scope config) {
+        // Optional init logic
     }
 
     @Override
     public void postInit(KeycloakSessionFactory factory) {
-        // Post init logic
-    }
-
-    @Override
-    public String getId() {
-        return "custom-sql-user-provider";
+        // Optional post-init logic
     }
 
     @Override
     public void close() {
-        // Cleanup
+        // Optional cleanup
     }
 
     @Override
-    public List<ProviderConfigProperty> getConfigProperties() {
-        return ProviderConfigurationBuilder.create()
-                .property("myCustomSetting", "My Custom Setting", "Example setting", ProviderConfigProperty.STRING_TYPE, "default_value", null)
-                .build();
+    public MyUserStorageProvider create(KeycloakSession keycloakSession, ComponentModel componentModel) {
+        return null;
+    }
+
+    @Override
+    public String getId() {
+        return "sql-user-provider";
     }
 }
