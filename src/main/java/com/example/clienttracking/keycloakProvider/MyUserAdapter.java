@@ -10,7 +10,7 @@ import org.keycloak.models.UserModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapter;
 
-import com.example.clienttracking.model.User;
+import com.example.clienttracking.model.keycloak;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -20,7 +20,7 @@ public class MyUserAdapter extends AbstractUserAdapter implements UserModel {
     private final String username;
     private final ComponentModel model;
 
-    public MyUserAdapter(KeycloakSession session, RealmModel realm, ComponentModel model, User user) {
+    public MyUserAdapter(KeycloakSession session, RealmModel realm, ComponentModel model, keycloak user) {
         super(session, realm, model);
         this.username = user.getUsername();
         this.model = model;

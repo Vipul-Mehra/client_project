@@ -1,6 +1,6 @@
 package com.example.clienttracking.keycloakProvider;
 
-import com.example.clienttracking.model.User;
+import com.example.clienttracking.model.keycloak;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.keycloak.component.ComponentModel;
@@ -41,9 +41,9 @@ public class MyUserStorageProvider implements
 
     @Override
     public UserModel getUserByUsername(RealmModel realm, String username) {
-        TypedQuery<User> query = em.createNamedQuery("findUserByUsername", User.class);
+        TypedQuery<keycloak> query = em.createNamedQuery("findUserByUsername", keycloak.class);
         query.setParameter("username", username);
-        List<User> result = query.getResultList();
+        List<keycloak> result = query.getResultList();
         if (result.isEmpty()) return null;
         return new MyUserAdapter(session, realm, model, result.get(0));
     }
@@ -66,15 +66,15 @@ public class MyUserStorageProvider implements
     @Override
     public boolean isValid(RealmModel realm, UserModel userModel, CredentialInput input) {
         if (!supportsCredentialType(input.getType())) return false;
-        TypedQuery<User> query = em.createNamedQuery("findUserByUsername", User.class);
+        TypedQuery<keycloak> query = em.createNamedQuery("findUserByUsername", keycloak.class);
         query.setParameter("username", userModel.getUsername());
-        List<User> result = query.getResultList();
+        List<keycloak> result = query.getResultList();
         return !result.isEmpty() && result.get(0).getPassword().equals(input.getChallengeResponse());
     }
 
     @Override
     public Stream<UserModel> searchForUserStream(RealmModel realm, String search, Integer firstResult, Integer maxResults) {
-        TypedQuery<User> query = em.createNamedQuery("findAllUsers", User.class);
+        TypedQuery<keycloak> query = em.createNamedQuery("findAllUsers", keycloak.class);
         if (firstResult != null) query.setFirstResult(firstResult);
         if (maxResults != null) query.setMaxResults(maxResults);
 
