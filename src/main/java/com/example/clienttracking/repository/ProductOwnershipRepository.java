@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductOwnershipRepository extends JpaRepository<ProductOwnership, Long> {
-    // This is where existsByUserIdAndProductId belongs
     boolean existsByUserIdAndProductId(String userId, String productId);
 }
