@@ -1,7 +1,10 @@
 package com.example.clienttracking.repository;
 
-import com.example.clienttracking.model.Clients;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ClientRepository extends JpaRepository<Clients, Long> {
+@Repository
+public interface AppClientRepository extends JpaRepository<AppClient, Long> {
+    // This method is crucial and needs to be present
+    AppClient findByClientId(String clientId);
 }
