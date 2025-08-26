@@ -4,13 +4,13 @@ import com.example.clienttracking.model.Clients;
 import java.util.List;
 
 public interface ClientService {
-    List<Clients> getAllClients();
+    List<Clients > getAllClients();
 
-    Clients getClientById(Long id);
+    Clients  getClientById(Long id);
 
-    Clients createClient(Clients client);
+    Clients  createClient(Clients client);
 
-    Clients updateClient(Long id, Clients clientDetails);
+    Clients  updateClient(Long id, Clients clientDetails);
 
     void deleteClient(Long id);
 }
