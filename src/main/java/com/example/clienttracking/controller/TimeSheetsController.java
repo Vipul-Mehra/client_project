@@ -50,6 +50,7 @@ public class TimeSheetsController {
             boolean isDesc = "desc".equalsIgnoreCase(sortDir);
 
             switch (sortBy.toLowerCase()) {
+
                 case "hoursworked":
                     result.sort(Comparator.comparing(dto -> dto.getHoursWorked()));
                     break;
