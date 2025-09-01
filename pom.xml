@@ -49,17 +49,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!--
-            The following Keycloak dependency has been removed as per your request.
-            If you need to re-add it in the future, you can uncomment this block.
-        -->
-        <!--
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>22.0.5</version>
-        </dependency>
-        -->
+
 
         <!-- MySQL Connector -->
         <dependency>
